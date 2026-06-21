@@ -2,9 +2,8 @@ from fastapi import APIRouter, Depends
 from sqlalchemy.orm import Session
 
 from app.database.db import get_db
-from app.schemas.transaction import TransactionCreate
-from app.services.transaction_service import create_transaction, get_all_transactions
-from app.services.wallet_service import update_wallet
+from app.schemas.transaction import TransactionCreate, TransactionBulkCreate
+from app.services.transaction_service import create_transaction, get_all_transactions, create_bulk_transaction
 
 router = APIRouter(
     prefix="/transactions",
@@ -17,6 +16,10 @@ def list_transactions(db: Session = Depends(get_db)):
 
 @router.post("/")
 def create_new_transaction(transaction: TransactionCreate, db: Session = Depends(get_db)):
-    created = create_transaction(db,transaction)
-    update_wallet(db, transactions=[transaction])
-    return {"message": "created", "transaction": created}
+    created, wallet = create_transaction(db,transaction)
+    return {"message": "created", "transaction": created, "wallet": wallet}
+
+@router.post("/bulk")
+def create_multiple_transactions(transactions: TransactionBulkCreate, db: Session = Depends(get_db)):
+    created_transactions, wallet = create_bulk_transaction(db, transactions_data=transactions)
+    return {"message": "created", "transactions": created_transactions, "wallet": wallet}

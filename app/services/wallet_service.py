@@ -22,10 +22,12 @@ def create_wallet(
 def get_all_wallets(db: Session):
     return db.query(Wallet).all()
 
-def update_wallet(db: Session, transactions: list[TransactionCreate]):
+def update_wallet(db: Session, transactions: list[TransactionCreate], wallet_id: int | None = None):
     try:
+        if not wallet_id:
+            wallet_id = transactions[0].wallet_id
         for transaction in transactions:
-            wallet = db.query(Wallet).filter(Wallet.id == transaction.wallet_id).first()
+            wallet = db.query(Wallet).filter(Wallet.id == wallet_id).with_for_update().first()
             if transaction.type == TransactionType.INCOME:
                 wallet.amount += transaction.amount
             elif transaction.type == TransactionType.EXPENSE:
