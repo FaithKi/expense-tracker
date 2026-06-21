@@ -1,23 +1,17 @@
 from pydantic import BaseModel
 from datetime import date
 
-class UpdateItem(BaseModel):
+from app.utils.transaction_types import TransactionType
+
+class Transaction(BaseModel):
     name: str
     amount: float
     category: str | None = None
+    type: TransactionType
     date: date
-
-class ExpenseItem(UpdateItem):
-    pass
-
-class IncomeItem(UpdateItem):
-    pass
-
-class ManualAdjustment(UpdateItem):
-    pass
 
 class Wallet(BaseModel):
     name: str
     amount: float
-    last_updated_by: UpdateItem
+    last_updated_by: Transaction
     last_updated_when: date
