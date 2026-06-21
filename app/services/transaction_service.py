@@ -14,8 +14,7 @@ def create_transaction(
         amount=transaction_data.amount,
         category=transaction_data.category,
         type=transaction_data.type,
-        
-        date=date.today()
+        wallet_id=transaction_data.wallet_id
     )
 
     db.add(transaction)
@@ -23,3 +22,6 @@ def create_transaction(
     db.refresh(transaction)
 
     return transaction
+
+def get_all_transactions(db: Session):
+    return db.query(Transaction).all()

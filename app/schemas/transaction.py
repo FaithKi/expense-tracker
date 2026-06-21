@@ -8,3 +8,4 @@ class TransactionCreate(BaseModel):
     amount: float
     category: str | None = None
     type: TransactionType
+    wallet_id: int
