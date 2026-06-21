@@ -36,9 +36,7 @@ def update_wallet(db: Session, transactions: list[TransactionCreate]):
                 print(f"Unknown transaction type: {transaction.type}")
                 raise ValueError(f"Unknown transaction type: {transaction.type}")
 
-        db.commit()
-        db.refresh(wallet)
-        return {"message": "success"}
+        return wallet
     except Exception as e:
         db.rollback()
         raise e
