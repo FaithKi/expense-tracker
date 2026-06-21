@@ -54,3 +54,6 @@ def create_bulk_transaction(
     created_transactions = db.query(Transaction).filter(Transaction.id.in_([t.id for t in transactions])).all()
 
     return  created_transactions, wallet
+
+def get_transactions_by_wallet(db: Session, wallet_id: int):
+    return db.query(Transaction).filter(Transaction.wallet_id == wallet_id).all()
