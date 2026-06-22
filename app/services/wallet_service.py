@@ -22,6 +22,9 @@ def create_wallet(
 def get_all_wallets(db: Session):
     return db.query(Wallet).all()
 
+def get_wallet_by_id(db: Session, wallet_id: int):
+    return db.query(Wallet).filter(Wallet.id == wallet_id).first()
+
 def update_wallet(db: Session, transactions: list[TransactionCreate], wallet_id: int | None = None):
     try:
         if not wallet_id:
