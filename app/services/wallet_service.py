@@ -45,3 +45,11 @@ def update_wallet(db: Session, transactions: list[TransactionCreate], wallet_id:
     except Exception as e:
         db.rollback()
         raise e
+    
+def delete_wallet_by_id(db: Session, wallet_id: int):
+    wallet = db.query(Wallet).filter(Wallet.id == wallet_id).first()
+    if wallet:
+        db.delete(wallet)
+        db.commit()
+        return True
+    return False

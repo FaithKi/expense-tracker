@@ -5,6 +5,8 @@ from app.services.wallet_service import update_wallet
 
 from datetime import date
 
+from app.utils.enums import TransactionType
+
 def get_all_transactions(db: Session):
     return db.query(Transaction).all()
 
@@ -57,3 +59,20 @@ def create_bulk_transaction(
 
 def get_transactions_by_wallet(db: Session, wallet_id: int):
     return db.query(Transaction).filter(Transaction.wallet_id == wallet_id).all()
+
+def delete_transaction_by_id(db: Session, transaction_id: int):
+    transaction = db.query(Transaction).filter(Transaction.id == transaction_id).first()
+    if not transaction:
+        return (False, None)
+    wallet = transaction.wallet
+    print(f"Deleting transaction: {transaction}, associated wallet: {wallet}")
+    match transaction.type:
+        case TransactionType.INCOME:
+            wallet.amount -= transaction.amount
+        case TransactionType.EXPENSE:
+            wallet.amount += transaction.amount
+        case TransactionType.ADJUSTMENT:
+            wallet.amount -= transaction.amount
+    db.delete(transaction)
+    db.commit()
+    return (True, wallet.amount)

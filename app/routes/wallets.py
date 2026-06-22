@@ -3,7 +3,7 @@ from sqlalchemy.orm import Session
 
 from app.database.db import get_db
 from app.schemas.wallet import WalletCreate
-from app.services.wallet_service import create_wallet, get_all_wallets, get_wallet_by_id, update_wallet
+from app.services.wallet_service import create_wallet, delete_wallet_by_id, get_all_wallets, get_wallet_by_id, update_wallet
 
 router = APIRouter(
     prefix="/wallets",
@@ -24,5 +24,13 @@ def get_wallet(wallet_id: int, db: Session = Depends(get_db)):
     wallet = get_wallet_by_id(db, wallet_id)
     if wallet:
         return {"message": "success", "wallet": wallet}
+    else:
+        return {"message": "wallet not found"}
+    
+@router.delete("/{wallet_id}")
+def delete_wallet(wallet_id: int, db: Session = Depends(get_db)):
+    result = delete_wallet_by_id(db, wallet_id)
+    if result:
+        return {"message": "deleted"}
     else:
         return {"message": "wallet not found"}

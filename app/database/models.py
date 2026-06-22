@@ -15,7 +15,7 @@ class Wallet(Base):
     id: Mapped[int] = mapped_column(primary_key=True)
     name: Mapped[str]
     amount: Mapped[float]
-    transactions: Mapped[list[Transaction]] = relationship(back_populates="wallet")
+    transactions: Mapped[list[Transaction]] = relationship(back_populates="wallet", cascade="all, delete-orphan")
     updated_when: Mapped[datetime] = mapped_column(
         default=datetime.now(UTC),
         onupdate=datetime.now(UTC)
@@ -29,7 +29,7 @@ class Transaction(Base):
     amount: Mapped[float]
     category: Mapped[str | None] = None
     type: Mapped[TransactionType]
-    wallet_id: Mapped[int] = mapped_column(ForeignKey("wallets.id"))
+    wallet_id: Mapped[int] = mapped_column(ForeignKey("wallets.id", ondelete="CASCADE"))
     wallet: Mapped[Wallet] = relationship(back_populates="transactions")
     date: Mapped[datetime] = mapped_column(
         default=datetime.now(UTC),
